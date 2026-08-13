@@ -20,7 +20,9 @@ interface AppContainer {
 // 1. Pass Context here so we can create the TokenManager
 class DefaultAppContainer(context: Context) : AppContainer {
 
-    private val BASE_URL = "http://10.0.2.2:8080"
+
+    //private val BASE_URL = "http://54.167.32.13"
+    private val BASE_URL = "http://54.167.32.13"
 
     // 2. Initialize TokenManager
     override val tokenManager = TokenManager(context)

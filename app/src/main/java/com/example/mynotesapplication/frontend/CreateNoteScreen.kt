@@ -13,11 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,15 +26,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.mynotesapplication.ui.components.CircleIconButton
+import com.example.mynotesapplication.ui.components.PillButton
 import com.example.mynotesapplication.ui.theme.NoteAccentColors
+import com.example.mynotesapplication.ui.theme.OnPaleYellow
+import com.example.mynotesapplication.ui.theme.OnPaleYellowMuted
+import com.example.mynotesapplication.ui.theme.PaleYellow
+import com.example.mynotesapplication.ui.theme.PaleYellowSurface
+import com.example.mynotesapplication.ui.theme.PitchBlack
 
 @Composable
 fun CreateNoteScreen(
     onNoteSaved: () -> Unit,
+    onBackClick: () -> Unit,
     notesViewModel: NotesViewModel
 ) {
     val createState by notesViewModel.createState.collectAsState()
@@ -51,39 +61,70 @@ fun CreateNoteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .background(PaleYellow)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("New note", style = MaterialTheme.typography.titleLarge)
+        CircleIconButton(
+            icon = Icons.AutoMirrored.Rounded.ArrowBack,
+            contentDescription = "Back",
+            onClick = onBackClick,
+            containerColor = Color.Black.copy(alpha = 0.12f),
+            tint = OnPaleYellow,
+        )
 
-        OutlinedTextField(
+        TextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Title") },
+            textStyle = MaterialTheme.typography.displayLarge.copy(color = OnPaleYellow),
+            placeholder = {
+                Text("Untitled", style = MaterialTheme.typography.displayLarge, color = OnPaleYellowMuted)
+            },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = OnPaleYellow,
+            ),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
+        TextField(
             value = content,
             onValueChange = { content = it },
-            label = { Text("Content") },
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = OnPaleYellow),
+            placeholder = {
+                Text("Start writing…", style = MaterialTheme.typography.bodyLarge, color = OnPaleYellowMuted)
+            },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = OnPaleYellow,
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(220.dp)
         )
 
-        Text("Color", style = MaterialTheme.typography.labelLarge)
+        Text(
+            "Color",
+            style = MaterialTheme.typography.labelLarge,
+            color = OnPaleYellowMuted,
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             NoteAccentColors.forEach { color ->
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
                         .background(color)
                         .border(
                             width = if (color == selectedColor) 3.dp else 0.dp,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = OnPaleYellow,
                             shape = CircleShape
                         )
                         .clickable { selectedColor = color }
@@ -96,7 +137,8 @@ fun CreateNoteScreen(
             Text(createErrorMessage, color = MaterialTheme.colorScheme.error)
         }
 
-        Button(
+        PillButton(
+            text = "Save note",
             onClick = {
                 notesViewModel.createNote(
                     title = title,
@@ -105,13 +147,12 @@ fun CreateNoteScreen(
                 )
             },
             enabled = createState !is CreateNoteUiState.Saving && title.isNotBlank(),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (createState is CreateNoteUiState.Saving) {
-                CircularProgressIndicator(modifier = Modifier.padding(2.dp))
-            } else {
-                Text("Save note")
-            }
-        }
+            loading = createState is CreateNoteUiState.Saving,
+            containerColor = PitchBlack,
+            contentColor = PaleYellowSurface,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        )
     }
 }

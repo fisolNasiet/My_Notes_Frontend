@@ -12,6 +12,8 @@ interface AppRepository {
             register(email: String, password: String): Response<Void>
     suspend fun getNotes(): Response<List<Note>>
     suspend fun createNote(note: Note): Response<Note>
+    suspend fun deleteNote(id: Long): Response<Void>
+    suspend fun deleteAccount(): Response<Void>
 }
 
 class NetworkRepository(
@@ -30,4 +32,8 @@ class NetworkRepository(
     override suspend fun getNotes(): Response<List<Note>> = noteApiService.getNotes()
 
     override suspend fun createNote(note: Note): Response<Note> = noteApiService.createNote(note)
+
+    override suspend fun deleteNote(id: Long): Response<Void> = noteApiService.deleteNote(id)
+
+    override suspend fun deleteAccount(): Response<Void> = noteApiService.deleteAccount()
 }

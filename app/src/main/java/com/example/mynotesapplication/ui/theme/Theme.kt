@@ -1,66 +1,32 @@
 package com.example.mynotesapplication.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = InkPrimaryDark,
-    secondary = InkSecondaryDark,
-    tertiary = InkTertiaryDark,
-    background = PaperBackgroundDark,
-    surface = PaperSurfaceDark,
-    onPrimary = PaperBackgroundDark,
-    onSecondary = PaperBackgroundDark,
-    onTertiary = PaperBackgroundDark,
-    onBackground = OnPaperDark,
-    onSurface = OnPaperDark,
-    error = ErrorDark,
-    onError = OnErrorDark,
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = InkPrimaryLight,
-    secondary = InkSecondaryLight,
-    tertiary = InkTertiaryLight,
-    background = PaperBackgroundLight,
-    surface = PaperSurfaceLight,
-    onPrimary = PaperBackgroundLight,
-    onSecondary = PaperBackgroundLight,
-    onTertiary = PaperBackgroundLight,
-    onBackground = OnPaperLight,
-    onSurface = OnPaperLight,
-    error = ErrorLight,
-    onError = OnErrorLight,
+// Fixed brand palette (pitch black + accent colors), not a togglable
+// light/dark scheme — the design spec calls for one specific look.
+private val AppColorScheme = darkColorScheme(
+    primary = AccentYellow,
+    onPrimary = OnAccent,
+    secondary = AccentBlue,
+    onSecondary = OnAccent,
+    tertiary = AccentGreen,
+    onTertiary = OnAccent,
+    background = PitchBlack,
+    onBackground = OnBlack,
+    surface = ElevatedBlack,
+    onSurface = OnBlack,
+    error = ErrorRed,
+    onError = OnErrorRed,
 )
 
 @Composable
-fun MyNotesApplicationTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic (Material You) color is intentionally off by default so the
-    // notebook brand palette above isn't overridden by the device wallpaper.
-    dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
+fun MyNotesApplicationTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = AppColorScheme,
         typography = Typography,
-        content = content
+        shapes = Shapes,
+        content = content,
     )
 }
