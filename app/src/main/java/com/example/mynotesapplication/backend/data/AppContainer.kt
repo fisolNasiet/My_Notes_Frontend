@@ -22,7 +22,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
 
 
     //private val BASE_URL = "http://54.167.32.13"
-    private val BASE_URL = "http://54.167.32.13"
+    private val BASE_URL = "http://3.70.251.110:80"
 
     // 2. Initialize TokenManager
     override val tokenManager = TokenManager(context)
