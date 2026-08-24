@@ -13,6 +13,7 @@ object Routes {
     const val REGISTER = "register"
     const val NOTES_LIST = "notes_list"
     const val CREATE_NOTE = "create_note"
+    const val ACCOUNT = "account"
 }
 
 @Composable
@@ -38,7 +39,20 @@ fun NoteNavHost(navController: NavHostController = rememberNavController()) {
             val notesViewModel: NotesViewModel = viewModel(factory = NotesViewModel.Factory)
             NotesListScreen(
                 onAddNoteClick = { navController.navigate(Routes.CREATE_NOTE) },
+                onAccountClick = { navController.navigate(Routes.ACCOUNT) },
                 notesViewModel = notesViewModel
+            )
+        }
+        composable(Routes.ACCOUNT) {
+            val accountViewModel: AccountViewModel = viewModel(factory = AccountViewModel.Factory)
+            AccountScreen(
+                onBackClick = { navController.popBackStack() },
+                onAccountDeleted = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                accountViewModel = accountViewModel
             )
         }
         composable(Routes.CREATE_NOTE) { backStackEntry ->
@@ -48,6 +62,7 @@ fun NoteNavHost(navController: NavHostController = rememberNavController()) {
             val notesViewModel: NotesViewModel = viewModel(parentEntry, factory = NotesViewModel.Factory)
             CreateNoteScreen(
                 onNoteSaved = { navController.popBackStack() },
+                onBackClick = { navController.popBackStack() },
                 notesViewModel = notesViewModel
             )
         }

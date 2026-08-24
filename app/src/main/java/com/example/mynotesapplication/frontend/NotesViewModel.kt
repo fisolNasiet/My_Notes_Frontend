@@ -26,6 +26,13 @@ sealed interface CreateNoteUiState {
     data class Error(val message: String) : CreateNoteUiState
 }
 
+sealed interface DeleteNoteUiState {
+    data object Idle : DeleteNoteUiState
+    data object Deleting : DeleteNoteUiState
+    data object Success : DeleteNoteUiState
+    data class Error(val message: String) : DeleteNoteUiState
+}
+
 class NotesViewModel(
     private val appRepository: AppRepository
 ) : ViewModel() {
@@ -35,6 +42,9 @@ class NotesViewModel(
 
     private val _createState = MutableStateFlow<CreateNoteUiState>(CreateNoteUiState.Idle)
     val createState: StateFlow<CreateNoteUiState> = _createState.asStateFlow()
+
+    private val _deleteState = MutableStateFlow<DeleteNoteUiState>(DeleteNoteUiState.Idle)
+    val deleteState: StateFlow<DeleteNoteUiState> = _deleteState.asStateFlow()
 
     init {
         loadNotes()
@@ -75,6 +85,27 @@ class NotesViewModel(
 
     fun resetCreateState() {
         _createState.value = CreateNoteUiState.Idle
+    }
+
+    fun deleteNote(id: Long) {
+        viewModelScope.launch {
+            _deleteState.value = DeleteNoteUiState.Deleting
+            try {
+                val response = appRepository.deleteNote(id)
+                if (response.isSuccessful) {
+                    _deleteState.value = DeleteNoteUiState.Success
+                    loadNotes()
+                } else {
+                    _deleteState.value = DeleteNoteUiState.Error("Failed to delete note: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _deleteState.value = DeleteNoteUiState.Error(e.message ?: "Unable to delete note")
+            }
+        }
+    }
+
+    fun resetDeleteState() {
+        _deleteState.value = DeleteNoteUiState.Idle
     }
 
     companion object {
